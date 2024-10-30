@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.Year;
 import java.util.List;
 
 @Service
@@ -39,12 +40,28 @@ public class TicketService {
         return ticketRepository.findById(id).orElseThrow(() -> new RuntimeException("Ticket não encontrado"));
     }
 
+    public Ticket confirmUsuario(Long ticketId) {
+        Ticket ticket = findById(ticketId);
+        ticket.setUsuarioConfirmado(true);
+        return ticketRepository.save(ticket);
+    }
+
+    public Ticket confirmTecnico(Long ticketId) {
+        Ticket ticket = findById(ticketId);
+        ticket.setTecnicoConfirmado(true);
+        return ticketRepository.save(ticket);
+    }
+
     public Ticket closeTicket(Long id, String resolucaoFinal) {
         Ticket ticket = findById(id);
-        ticket.setResolucaoFinal(resolucaoFinal);
-        ticket.setDataFechamento(LocalDateTime.now());
-        ticket.setStatus(StatusTicket.FECHADO);
-        return ticketRepository.save(ticket);
+        if (ticket.isUsuarioConfirmado() && ticket.isTecnicoConfirmado()) {
+            ticket.setResolucaoFinal(resolucaoFinal);
+            ticket.setDataFechamento(LocalDateTime.now());
+            ticket.setStatus(StatusTicket.FECHADO);
+            return ticketRepository.save(ticket);
+        } else {
+            throw new RuntimeException("O ticket não pode ser fechado sem a confirmação de usuário e técnico.");
+        }
     }
 
     public void deleteTicket(Long id) {
@@ -54,4 +71,57 @@ public class TicketService {
     public void deleteAllTickets() {
         ticketRepository.deleteAll();
     }
+
+    public void verificarConfirmacoesEFecharTicket(Long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new RuntimeException("Ticket não encontrado"));
+
+        if (ticket.getConfirmacaoUsuario() && ticket.getConfirmacaoTecnico()) {
+            ticket.setStatus(StatusTicket.FECHADO);
+            ticket.setDataFechamento(LocalDateTime.now());
+            ticket.setResolucaoFinal("Resolvido");
+            ticketRepository.save(ticket);
+        }
+    }
+
+    public Ticket confirmarResolucaoUsuario(Long ticketId) {
+        return atualizarConfirmacaoUsuario(ticketId, true);
+    }
+
+    public Ticket confirmarResolucaoTecnico(Long ticketId) {
+        return atualizarConfirmacaoTecnico(ticketId, true);
+    }
+
+
+
+    private Ticket atualizarConfirmacaoUsuario(Long ticketId, boolean confirmacao) {
+        Ticket ticket = findById(ticketId);
+        ticket.setConfirmacaoUsuario(confirmacao);
+        ticket = ticketRepository.save(ticket);
+        verificarConfirmacoesEFecharTicket(ticketId);
+        return ticket;
+    }
+
+    private Ticket atualizarConfirmacaoTecnico(Long ticketId, boolean confirmacao) {
+        Ticket ticket = findById(ticketId);
+        ticket.setConfirmacaoTecnico(confirmacao);
+        ticket = ticketRepository.save(ticket);
+        verificarConfirmacoesEFecharTicket(ticketId);
+        return ticket;
+    }
+
+    public Long countTicketsThisYear() {
+        LocalDateTime startDate = Year.now().atDay(1).atStartOfDay();
+        LocalDateTime endDate = Year.now().atDay(365).atTime(23, 59, 59);
+        return ticketRepository.countTicketsBetween(startDate, endDate);
+    }
+
+    public Long countOpenTicketsThisYear() {
+        return ticketRepository.countOpenTicketsThisYear();
+    }
+
+    public Long countClosedTicketsThisYear() {
+        return ticketRepository.countClosedTicketsThisYear();
+    }
+
 }

@@ -34,6 +34,9 @@ public class Ticket {
     @Enumerated(EnumType.STRING)
     private StatusTicket status;
 
+    private Boolean confirmacaoUsuario = false;
+    private Boolean confirmacaoTecnico = false;
+
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuarioCriador;
@@ -52,4 +55,7 @@ public class Ticket {
     private LocalDateTime dataFechamento;
 
     private String resolucaoFinal = "Não resolvido";
+
+    private boolean usuarioConfirmado;
+    private boolean tecnicoConfirmado;
 }

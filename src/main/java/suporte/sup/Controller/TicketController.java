@@ -3,8 +3,6 @@ package suporte.sup.Controller;
 import suporte.sup.Entities.Ticket;
 import suporte.sup.Enum.StatusTicket;
 import suporte.sup.Service.TicketService;
-import suporte.sup.Service.UsuarioService;
-import suporte.sup.Service.TecnicoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +15,6 @@ import java.util.List;
 public class TicketController {
 
     private final TicketService ticketService;
-    private final UsuarioService usuarioService;
-    private final TecnicoService tecnicoService;
 
     @PostMapping("/salvar")
     public ResponseEntity<Ticket> criarTicket(@RequestBody Ticket ticket, @RequestParam Long usuarioId, @RequestParam Long tecnicoId) {
@@ -32,9 +28,17 @@ public class TicketController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Ticket> buscarTicketPorId(@PathVariable Long id) {
-        Ticket ticket = ticketService.findById(id);
         return ResponseEntity.ok(ticketService.findById(id));
-        //return ResponseEntity.ok(ticket);
+    }
+
+    @PutMapping("/{id}/confirmar-usuario")
+    public ResponseEntity<Ticket> confirmarUsuario(@PathVariable Long id) {
+        return ResponseEntity.ok(ticketService.confirmarResolucaoUsuario(id));
+    }
+
+    @PutMapping("/{id}/confirmar-tecnico")
+    public ResponseEntity<Ticket> confirmarTecnico(@PathVariable Long id) {
+        return ResponseEntity.ok(ticketService.confirmarResolucaoTecnico(id));
     }
 
     @PutMapping("/{id}/fechar")
@@ -53,4 +57,23 @@ public class TicketController {
         ticketService.deleteAllTickets();
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/ano")
+    public ResponseEntity<Long> countTicketsThisYear() {
+        Long totalTickets = ticketService.countTicketsThisYear();
+        return ResponseEntity.ok(totalTickets);
+    }
+
+    @GetMapping("/ano/abertos")
+    public ResponseEntity<Long> countOpenTicketsThisYear() {
+        Long openTickets = ticketService.countOpenTicketsThisYear();
+        return ResponseEntity.ok(openTickets);
+    }
+
+    @GetMapping("/ano/fechados")
+    public ResponseEntity<Long> countClosedTicketsThisYear() {
+        Long closedTickets = ticketService.countClosedTicketsThisYear();
+        return ResponseEntity.ok(closedTickets);
+    }
+
 }
