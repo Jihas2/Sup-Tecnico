@@ -11,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/respostas")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class RespostaController {
 
     private final RespostaService respostaService;

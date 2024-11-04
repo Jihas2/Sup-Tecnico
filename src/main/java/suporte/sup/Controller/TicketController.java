@@ -12,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/tickets")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class TicketController {
 
     private final TicketService ticketService;

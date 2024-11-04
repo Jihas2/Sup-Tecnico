@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/tecnico")
 @RequiredArgsConstructor
-
+@CrossOrigin("*")
 public class TecnicoController {
 
     private final TecnicoService tecnicoService;
