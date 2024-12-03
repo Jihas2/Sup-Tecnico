@@ -1,5 +1,6 @@
 package suporte.sup.Controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import suporte.sup.Entities.Ticket;
 import suporte.sup.Enum.StatusTicket;
 import suporte.sup.Service.TicketService;
@@ -58,19 +59,19 @@ public class TicketController {
         ticketService.deleteAllTickets();
         return ResponseEntity.noContent().build();
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/ano")
     public ResponseEntity<Long> countTicketsThisYear() {
         Long totalTickets = ticketService.countTicketsThisYear();
         return ResponseEntity.ok(totalTickets);
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/ano/abertos")
     public ResponseEntity<Long> countOpenTicketsThisYear() {
         Long openTickets = ticketService.countOpenTicketsThisYear();
         return ResponseEntity.ok(openTickets);
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/ano/fechados")
     public ResponseEntity<Long> countClosedTicketsThisYear() {
         Long closedTickets = ticketService.countClosedTicketsThisYear();

@@ -19,4 +19,5 @@ public class Tecnico {
     @JsonIgnore
     @OneToMany(mappedBy = "tecnicoResponsavel", cascade = CascadeType.ALL)
     private List<Ticket> tickets;
+
 }
