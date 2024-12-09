@@ -19,11 +19,13 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole ('USER')")
     @PostMapping("/salvar")
     public ResponseEntity<Usuario> saveUsuario(@RequestBody Usuario usuario) {
         return ResponseEntity.ok(usuarioService.saveUsuario(usuario));
     }
-    @PreAuthorize("hasRole('ADMIN') or ('USER')")
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/teste")
     public List<UsuarioResponse> teste(){
         var data = usuarioService.findAllUsuarios();
@@ -45,17 +47,20 @@ public class UsuarioController {
     public ResponseEntity<List<Usuario>> findAllUsuarios() {
         return ResponseEntity.ok(usuarioService.findAllUsuarios());
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> findByIdUsuario(@PathVariable Long id) {
         return ResponseEntity.ok(usuarioService.findByIdUsuario(id));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/deletar/{id}")
     public ResponseEntity<Void> deleteUsuario(@PathVariable Long id) {
         usuarioService.deleteUsuario(id);
         return ResponseEntity.noContent().build();
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/deletarTodos")
     public ResponseEntity<Void> deleteAllUsuarios() {

@@ -51,8 +51,8 @@ public class UsuarioService {
                         login.senha()
                 )
         );
-        Usuario user = usuarioRepository.findByNomr(login.login()).get();
-        String jwtToken = jwtService.generateToken(user);
+//        Usuario user = usuarioRepository.findByNomr(login.login()).get();
+        String jwtToken = jwtService.generateToken(data);
 
         return jwtToken;
     }

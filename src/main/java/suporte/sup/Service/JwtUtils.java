@@ -27,7 +27,7 @@ public class JwtUtils {
         extraClaims.put("username", userDetails.getUsername());
         extraClaims.put("id", userDetails.getId().toString());
         extraClaims.put("role", userDetails.getRole());
-        extraClaims.put("outracoisa", "teste");
+        extraClaims.put("password",userDetails.getPassword());
         System.out.println("11111111111111111111111111111111111111111111");
         System.out.println(userDetails.getRole());
         System.out.println("11111111111111111111111111111111111111111111");

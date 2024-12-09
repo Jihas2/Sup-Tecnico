@@ -12,14 +12,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api")
 @CrossOrigin("*")
 public class loginController {
 
     @Autowired
     private UsuarioService pessoaService;
 
-    @PostMapping("login")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USUARIO')")
+    @PostMapping("/login")
     public ResponseEntity<String> logar(@RequestBody LoginRequest login) {
         try {
             return ResponseEntity.ok(pessoaService.logar(login));
